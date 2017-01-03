@@ -34,6 +34,7 @@ public class PingRelay {
     private String jid;
     private String token;
     private String channelId;
+    private String serverRole;
 
     private JDA discordClient;
     private AbstractXMPPConnection xmppClient;
@@ -41,11 +42,12 @@ public class PingRelay {
     private Thread xmppThread;
     private Thread autoReconnectThread;
 
-    private PingRelay(String token, String jid, String pw, String cid) {
+    private PingRelay(String token, String jid, String pw, String cid, String role) {
         this.token = token;
         this.jid = jid;
         this.pw = pw;
         this.channelId = cid;
+        this.serverRole = role;
         this.loginDiscord();
     }
 
@@ -53,10 +55,10 @@ public class PingRelay {
         return PingRelay.INSTANCE;
     }
 
-    public static void create(String token, String jid, String pw, String cid) {
+    public static void create(String token, String jid, String pw, String cid, String role) {
         if (PingRelay.INSTANCE != null)
             throw new IllegalStateException("Already initialized!");
-        PingRelay.INSTANCE = new PingRelay(token, jid, pw, cid);
+        PingRelay.INSTANCE = new PingRelay(token, jid, pw, cid, role);
     }
 
     public static void main(String... args) {
@@ -69,7 +71,7 @@ public class PingRelay {
         System.out.println("Please enter password for " + args[1]);
         System.out.print("> ");
         String pw = String.valueOf(System.console().readPassword());
-        PingRelay.create(args[0], args[1], pw, args[2]);
+        PingRelay.create(args[0], args[1], pw, args[2], args[3]);
     }
 
     private void loginDiscord() {
@@ -90,26 +92,11 @@ public class PingRelay {
                         if (content.startsWith("!stop") || content.startsWith("!kill")) {
                             List<Role> roles = mevent.getGuild().getRolesForUser(message.getAuthor());
                             for (Role i: roles) {
-                                if (i.getName().equals("Alliance")) {
+                                if (i.getName().equals(serverRole)) {
                                     PingRelay.getInstance().shutdown();
                                 }
                             }
                         }
-
-//                    } else if (event instanceof DisconnectEvent) {
-//                        PingManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).setPingInterval(-1);
-//                        ReconnectionManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).disableAutomaticReconnection();
-//                        PingRelay.getInstance().getXmppClient().disconnect();
-//
-//                    } else if (event instanceof ReconnectedEvent) {
-//                        PingRelay.getInstance().connectXmpp();
-//                        PingManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).setPingInterval(60);
-//                        ReconnectionManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).enableAutomaticReconnection();
-//
-//                    } else if (event instanceof ResumedEvent) {
-//                        PingRelay.getInstance().connectXmpp();
-//                        PingManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).setPingInterval(60);
-//                        ReconnectionManager.getInstanceFor(PingRelay.getInstance().getXmppClient()).enableAutomaticReconnection();
                     }
                 }
             });
