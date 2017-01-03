@@ -1,2 +1,2 @@
 # pingrelay
-Relays pings from jabber to discord.
+XMPP -> Discord message relay
