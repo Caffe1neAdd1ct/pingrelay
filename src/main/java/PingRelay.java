@@ -159,7 +159,7 @@ public class PingRelay {
 
     private void messageReceived(Message m) {
         if (m.getFrom().startsWith("skynet") && m.getBody() != null) {
-            this.getChannel().sendMessage("@everyone " + m.getBody().replaceAll(" \\|\\| ", "\n"));
+            this.getChannel().sendMessage("@everyone \n" + (m.getBody().replaceAll("\\|\\| ", "\n").replaceAll("\\s*\\*\\*\\*\\s*BROADCAST TO all\\s*\\*\\*\\*\\s*\\n", "")));
             System.out.println("Ping!");
         }
     }
