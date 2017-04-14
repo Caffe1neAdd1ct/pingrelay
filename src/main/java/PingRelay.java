@@ -159,8 +159,13 @@ public class PingRelay {
 
     private void messageReceived(Message m) {
         if (m.getFrom().startsWith("skynet") && m.getBody() != null) {
-            this.getChannel().sendMessage("@everyone \n" + (m.getBody().replaceAll("\\|\\| ", "\n").replaceAll("\\s*\\*\\*\\*\\s*BROADCAST TO all\\s*\\*\\*\\*\\s*\\n", "")));
-            System.out.println("Ping!");
+            System.out.println(m.getBody());
+            this.getChannel().sendMessage("@everyone \n" + (m.getBody()
+                    .replaceAll("\\s*\\*{3}\\s*BROADCAST TO all\\s*\\*{3}\\s*", "")
+                    .replaceAll("\\s*\\|\\|\\s*", "\n")
+                    .replaceAll("\\*{4}\\s*This is a broadcast from ", "-- ")
+                    .replaceAll(" to \\[all\\] @ ", ", ")
+                    .replaceAll(". Replies to this message are not monitored\\s*\\*{4}", "")));
         }
     }
 
